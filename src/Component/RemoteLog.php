@@ -13,8 +13,8 @@ class RemoteLog implements SharedService{
 	protected $request;
 	protected $guid;
 
-	public function __construct(Request $request){
-		$this->host = env('remote-log.host') . '/';
+	public function __construct(Request $request, Config $config){
+		$this->host = $config->host . '/';
 		$this->guid = uniqid();
 		$this->request = $request;
 	}
@@ -24,7 +24,6 @@ class RemoteLog implements SharedService{
 		set_exception_handler([$this, 'handleException']);
 		set_error_handler(function ($severity, $message, $file, $line){ throw new \ErrorException($message, $severity, $severity, $file, $line); });
 		register_shutdown_function([$this, 'shutdownFatalErrorHandler']);
-
 	}
 
 	public function shutdownFatalErrorHandler(){
@@ -141,7 +140,5 @@ class RemoteLog implements SharedService{
 		}
 		return "";
 	}
-
-	static function loadFacades(){ include __DIR__."/../Facade/dump.php"; }
-
+	
 }
